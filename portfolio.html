@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portfolio — lk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --stone:   #F7F5F0;
+    --sand:    #E8E0D0;
+    --moss:    #5C6B4A;
+    --ink:     #1C1C1C;
+    --water:   #7b9aa7;
+    --pale:    #404a34;
+    --shadow:  rgba(28,28,28,0.07);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--stone);
+    color: var(--ink);
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 300;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ── RIPPLE CANVAS ── */
+  #ripple-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.45;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 64px;
+    background: linear-gradient(to bottom, var(--stone) 60%, transparent);
+  }
+
+  .nav-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 22px;
+    letter-spacing: 0.12em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--pale);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .nav-links a:hover { color: var(--moss); }
+
+  /* ── SECTIONS ── */
+  section {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    padding: 0 64px 80px;
+    gap: 0;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(64px, 8vw, 120px);
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--moss);
+  }
+
+  .hero-aside {
+    padding-left: 64px;
+    padding-bottom: 12px;
+    border-left: 1px solid var(--pale);
+  }
+
+  .hero-role {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--water);
+    margin-bottom: 16px;
+  }
+
+  .hero-bio {
+    font-size: 13px;
+    color: var(--ink);
+    opacity: 0.7;
+    max-width: 340px;
+    line-height: 1.9;
+  }
+
+  .hero-scroll {
+    display: block;
+    margin-top: 36px;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--pale);
+  }
+
+  /* ── STONE DIVIDER ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 0 64px;
+    margin: 0;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--sand);
+  }
+
+  .divider-glyph {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--pale);
+    user-select: none;
+  }
+
+  /* ── WORK ── */
+  #work {
+    padding: 120px 64px;
+  }
+
+  .section-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--moss);
+    margin-bottom: 64px;
+  }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .work-item {
+    background: var(--sand);
+    padding: 52px 48px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s;
+    cursor: default;
+  }
+
+  .work-item::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--moss);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .work-item:hover { background: #DDD6C4; }
+  .work-item:hover::before { transform: scaleX(1); }
+
+  .work-item-index {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--pale);
+    margin-bottom: 28px;
+  }
+
+  .work-item-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+
+  .work-item-desc {
+    font-size: 12px;
+    color: var(--ink);
+    opacity: 0.6;
+    line-height: 1.8;
+    max-width: 320px;
+  }
+
+  .work-item-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 28px;
+  }
+
+  .tag {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--pale);
+    color: var(--pale);
+  }
+
+  /* wide item */
+  .work-item.wide {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .work-item.wide .work-item-title { font-size: 38px; }
+
+  /* ── SKILLS ── */
+  #skills {
+    padding: 120px 64px;
+    background: var(--sand);
+  }
+
+  .skills-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .skills-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 48px;
+    line-height: 1.1;
+    color: var(--ink);
+    position: sticky;
+    top: 120px;
+  }
+
+  .skill-group {
+    margin-bottom: 52px;
+  }
+
+  .skill-group-label {
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--water);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--pale);
+  }
+
+  .skill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .skill-pill {
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    padding: 6px 16px;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    transition: background 0.25s, color 0.25s;
+    cursor: default;
+  }
+
+  .skill-pill:hover {
+    background: var(--ink);
+    color: var(--stone);
+  }
+
+  /* ── ABOUT ── */
+  #about {
+    padding: 120px 64px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .about-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(32px, 4vw, 52px);
+    line-height: 1.25;
+    color: var(--ink);
+  }
+
+  .about-quote span { color: var(--moss); }
+
+  .about-body p {
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--ink);
+    opacity: 0.7;
+    margin-bottom: 20px;
+  }
+
+  .about-body p:last-child { margin-bottom: 0; }
+
+  /* ── CONTACT ── */
+  #contact {
+    padding: 120px 64px 80px;
+    background: var(--ink);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: end;
+  }
+
+  .contact-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(52px, 7vw, 96px);
+    line-height: 0.95;
+    color: var(--stone);
+    letter-spacing: -0.02em;
+  }
+
+  .contact-title em {
+    font-style: italic;
+    color: var(--moss);
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .contact-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(247,245,240,0.12);
+    text-decoration: none;
+    transition: border-color 0.3s;
+  }
+
+  .contact-link:hover { border-color: var(--moss); }
+
+  .contact-link-label {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--pale);
+  }
+
+  .contact-link-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--stone);
+    transition: color 0.3s;
+  }
+
+  .contact-link:hover .contact-link-value { color: var(--water); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    padding: 32px 64px;
+    border-top: 1px solid rgba(247,245,240,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer span {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(247,245,240,0.25);
+  }
+
+  /* ── REVEAL ANIMATION ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 20px 28px; }
+    .nav-links { gap: 24px; }
+
+    #hero {
+      grid-template-columns: 1fr;
+      padding: 120px 28px 60px;
+      gap: 48px;
+      align-items: start;
+      padding-top: 140px;
+    }
+    .hero-aside { padding-left: 0; border-left: none; border-top: 1px solid var(--pale); padding-top: 32px; }
+
+    #work { padding: 80px 28px; }
+    .work-grid { grid-template-columns: 1fr; }
+    .work-item.wide { grid-column: span 1; grid-template-columns: 1fr; }
+
+    .divider { padding: 0 28px; }
+
+    #skills { padding: 80px 28px; }
+    .skills-layout { grid-template-columns: 1fr; gap: 40px; }
+    .skills-heading { position: static; font-size: 40px; }
+
+    #about { padding: 80px 28px; grid-template-columns: 1fr; }
+    #contact { padding: 80px 28px 60px; grid-template-columns: 1fr; }
+    footer { padding: 24px 28px; flex-direction: column; gap: 8px; text-align: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; }
+    #ripple-canvas { display: none; }
+    * { transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="ripple-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-mark" href="#hero">lk</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <h1 class="hero-title reveal">
+    <em>Hello!</em><br>
+    <p style="font-size: clamp(48px, 7vw, 84px); margin-top: 12px;">I'm Lee Kee :)</p>
+  </h1>
+  <div class="hero-aside reveal" style="transition-delay:0.2s">
+    <p class="hero-role">SDET · Test Automation · Post-Trade Systems</p>
+    <p class="hero-bio">
+      I build the infrastructure that makes software trustworthy.
+      Two years across investment banking systems — from collateral management
+      to settlement — writing tests that hold under pressure.
+    </p>
+    <span class="hero-scroll">↓ &nbsp; Selected work</span>
+  </div>
+</section>
+
+<div class="divider">
+  <div class="divider-line"></div>
+  <span class="divider-glyph">◇</span>
+  <div class="divider-line"></div>
+</div>
+
+<!-- WORK -->
+<section id="work">
+  <p class="section-eyebrow reveal">Selected Work</p>
+  <div class="work-grid">
+
+    <div class="work-item reveal">
+      <p class="work-item-index">001</p>
+      <h3 class="work-item-title">Collateral Management<br>Test Suite</h3>
+      <p class="work-item-desc">
+        End-to-end automation covering margin call workflows,
+        exposure calculations, and settlement reconciliation
+        across a post-trade platform serving 40+ counterparties.
+      </p>
+      <div class="work-item-tags">
+        <span class="tag">Java</span>
+        <span class="tag">Serenity BDD</span>
+        <span class="tag">Selenium</span>
+      </div>
+    </div>
+
+    <div class="work-item reveal" style="transition-delay:0.1s">
+      <p class="work-item-index">002</p>
+      <h3 class="work-item-title">Options Pricing<br>Engine</h3>
+      <p class="work-item-desc">
+        A backtesting and options pricing library built from first principles —
+        Black-Scholes with Greeks, volatility surface construction,
+        and scenario analysis tooling.
+      </p>
+      <div class="work-item-tags">
+        <span class="tag">Python</span>
+        <span class="tag">NumPy</span>
+        <span class="tag">pytest</span>
+      </div>
+    </div>
+
+    <div class="work-item wide reveal" style="transition-delay:0.15s">
+      <div>
+        <p class="work-item-index">003</p>
+        <h3 class="work-item-title">Angular Frontend<br>Automation Framework</h3>
+      </div>
+      <div>
+        <p class="work-item-desc">
+          Designed and led migration of a legacy Selenium test suite to Playwright,
+          eliminating synchronisation flakiness endemic to Angular's change detection cycle.
+          Reduced CI failure rate by introducing deterministic wait strategies and
+          parallel execution.
+        </p>
+        <div class="work-item-tags">
+          <span class="tag">Playwright</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">Angular</span>
+          <span class="tag">CI/CD</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="work-item reveal" style="transition-delay:0.2s">
+      <p class="work-item-index">004</p>
+      <h3 class="work-item-title">Backtesting<br>Framework</h3>
+      <p class="work-item-desc">
+        Event-driven backtesting engine for quantitative strategy research,
+        with PnL attribution, drawdown analysis, and Sharpe reporting.
+      </p>
+      <div class="work-item-tags">
+        <span class="tag">Python</span>
+        <span class="tag">Pandas</span>
+        <span class="tag">SQL</span>
+      </div>
+    </div>
+
+    <div class="work-item reveal" style="transition-delay:0.25s">
+      <p class="work-item-index">005</p>
+      <h3 class="work-item-title">NRT Sanity<br>Testing Practice</h3>
+      <p class="work-item-desc">
+        Formalised a near-real-time sanity testing layer for trade booking systems,
+        catching production regressions within minutes of deployment.
+      </p>
+      <div class="work-item-tags">
+        <span class="tag">Java</span>
+        <span class="tag">Post-Trade</span>
+        <span class="tag">PnL</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider">
+  <div class="divider-line"></div>
+  <span class="divider-glyph">◇</span>
+  <div class="divider-line"></div>
+</div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="skills-layout">
+    <h2 class="skills-heading reveal">Craft &amp;<br>Tools</h2>
+    <div>
+
+      <div class="skill-group reveal">
+        <p class="skill-group-label">Languages</p>
+        <div class="skill-list">
+          <span class="skill-pill">Java</span>
+          <span class="skill-pill">Python</span>
+          <span class="skill-pill">TypeScript</span>
+          <span class="skill-pill">SQL</span>
+          <span class="skill-pill">Shell</span>
+          <span class="skill-pill">Go</span>
+        </div>
+      </div>
+
+      <div class="skill-group reveal" style="transition-delay:0.1s">
+        <p class="skill-group-label">Test Automation</p>
+        <div class="skill-list">
+          <span class="skill-pill">Selenium</span>
+          <span class="skill-pill">Playwright</span>
+          <span class="skill-pill">Serenity BDD</span>
+          <span class="skill-pill">pytest</span>
+          <span class="skill-pill">JUnit</span>
+          <span class="skill-pill">Cucumber</span>
+        </div>
+      </div>
+
+      <div class="skill-group reveal" style="transition-delay:0.15s">
+        <p class="skill-group-label">Domain</p>
+        <div class="skill-list">
+          <span class="skill-pill">Post-Trade</span>
+          <span class="skill-pill">Collateral Management</span>
+          <span class="skill-pill">PnL Attribution</span>
+          <span class="skill-pill">Settlement</span>
+          <span class="skill-pill">Margin &amp; Exposure</span>
+        </div>
+      </div>
+
+      <div class="skill-group reveal" style="transition-delay:0.2s">
+        <p class="skill-group-label">Infrastructure</p>
+        <div class="skill-list">
+          <span class="skill-pill">Maven</span>
+          <span class="skill-pill">Terraform</span>
+          <span class="skill-pill">AWS CLI</span>
+          <span class="skill-pill">Docker</span>
+          <span class="skill-pill">GitHub Actions</span>
+          <span class="skill-pill">Jira</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider">
+  <div class="divider-line"></div>
+  <span class="divider-glyph">◇</span>
+  <div class="divider-line"></div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <blockquote class="about-quote reveal">
+    "The space between the stones is<br>
+    <span>as deliberate as the stones.</span>"
+  </blockquote>
+  <div class="about-body reveal" style="transition-delay:0.15s">
+    <p>
+      I'm a Singapore-based SDET with roots in Java development,
+      working across investment banking infrastructure in post-trade and collateral
+      management systems. I hold independent production sign-off authority —
+      which means I understand that test coverage is a responsibility, not a metric.
+    </p>
+    <p>
+      My longer-term direction is toward trading infrastructure and quantitative
+      systems — environments where correctness and latency both matter,
+      and where rigorous engineering is the baseline.
+    </p>
+    <p>
+      Outside of work: fiction (a multi-book project), pixel art,
+      and the occasional tarot spread.
+    </p>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <h2 class="contact-title reveal">
+    Let's<br>
+    <em>talk.</em>
+  </h2>
+  <div class="contact-links reveal" style="transition-delay:0.2s">
+    <a class="contact-link" href="mailto:hello@example.com">
+      <span class="contact-link-label">Email</span>
+      <span class="contact-link-value">hello@example.com</span>
+    </a>
+    <a class="contact-link" href="https://linkedin.com" target="_blank" rel="noopener">
+      <span class="contact-link-label">LinkedIn</span>
+      <span class="contact-link-value">linkedin.com/in/lk</span>
+    </a>
+    <a class="contact-link" href="https://github.com" target="_blank" rel="noopener">
+      <span class="contact-link-label">GitHub</span>
+      <span class="contact-link-value">github.com/lk</span>
+    </a>
+    <a class="contact-link" href="#" download>
+      <span class="contact-link-label">Résumé</span>
+      <span class="contact-link-value">Download PDF →</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <span>lk — Singapore</span>
+  <span>2026</span>
+</footer>
+
+<script>
+/* ── SAND RIPPLE ANIMATION ── */
+(function () {
+  const canvas = document.getElementById('ripple-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, lines;
+  const SPACING = 38;
+  const AMPLITUDE = 14;
+  const FREQ = 0.012;
+  const SPEED = 0.004;
+  let t = 0;
+  let raf;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    lines = Math.ceil(H / SPACING) + 2;
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.strokeStyle = '#B8AFA0';
+    ctx.lineWidth = 0.7;
+
+    for (let i = 0; i < lines; i++) {
+      const baseY = i * SPACING - (SPACING / 2);
+      ctx.beginPath();
+      for (let x = 0; x <= W; x += 3) {
+        // two overlapping sine waves for the raked-sand feel
+        const y = baseY
+          + Math.sin(x * FREQ + t + i * 0.4) * AMPLITUDE
+          + Math.sin(x * FREQ * 1.7 - t * 0.6 + i * 0.9) * (AMPLITUDE * 0.35);
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    t += SPEED;
+    raf = requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  draw();
+
+  // Respect reduced motion
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    cancelAnimationFrame(raf);
+    canvas.style.display = 'none';
+  }
+})();
+
+/* ── SCROLL REVEAL ── */
+(function () {
+  const els = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>
